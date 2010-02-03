@@ -8,8 +8,7 @@ package com.redis
 import java.io._
 import java.net.Socket
 
-trait SocketOperations {
-  
+object SocketOperations {
   // Response codes from the Redis server
   // they tell you what's coming next from the server.
   val ERR    = "-"
@@ -18,6 +17,11 @@ trait SocketOperations {
   val BULK   = "$"
   val MULTI  = "*"
   val INT    = ":"
+}
+
+trait SocketOperations {
+
+  import SocketOperations._
   
   val host: String
   val port: Int
@@ -104,6 +108,14 @@ trait SocketOperations {
       getInputStream.readLine()
     } catch {
       case _ => ERR;
+    }
+  }
+
+  def readchar: Int = {
+    try {
+      getInputStream.read()
+    } catch {
+      case _ => -1;
     }
   }
   

@@ -1,5 +1,7 @@
 package com.redis.operations
 
+import com.redis.SocketOperations
+
 /**
  * Redis key space operations
  *
@@ -16,6 +18,17 @@ trait KeySpaceOperations{
     connection.write("KEYS "+pattern+"\r\n")
     connection.readResponse match {
       case Some(s: String) => Some(s.split(" "))
+      case _ => None
+    }
+  }
+
+  // KEYS
+  // returns KeyList matching the glob-style pattern.
+  def keysList(pattern: String): Option[KeyList] = {
+    connection.write("KEYS "+pattern+"\r\n")
+    val bulkLine = connection.readline
+    bulkLine.substring( 0, 1 ) match {
+      case SocketOperations.BULK => Some(new KeyList(connection))
       case _ => None
     }
   }
